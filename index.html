@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fitness Tracker · 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">💪</span>
+      <div>
+        <h1>Fitness Tracker</h1>
+        <p class="subtitle" id="subtitle">Jan 2026 → Dec 2026</p>
+      </div>
+    </div>
+
+    <div class="legend" id="legend">
+      <!-- activity legend injected by JS -->
+    </div>
+
+    <div class="year-selector">
+      <button id="prevYear" class="icon-btn year-nav" aria-label="Previous year">&#8249;</button>
+      <span id="yearDisplay" class="year-label">2026</span>
+      <button id="nextYear" class="icon-btn year-nav" aria-label="Next year">&#8250;</button>
+    </div>
+
+    <div class="actions">
+      <button id="exportBtn" class="btn ghost" title="Export your data as JSON">⬇ Export</button>
+      <label class="btn ghost" title="Import previously exported JSON">
+        ⬆ Import
+        <input id="importInput" type="file" accept="application/json" hidden />
+      </label>
+      <button id="resetBtn" class="btn danger" title="Clear all logged activities">🗑 Reset</button>
+    </div>
+  </header>
+
+  <section class="stats" id="stats">
+    <div class="stat"><span class="stat-label">Active days</span><span class="stat-value" id="statActive">0</span></div>
+    <div class="stat"><span class="stat-label">Total minutes</span><span class="stat-value" id="statMinutes">0</span></div>
+    <div class="stat"><span class="stat-label">Current streak</span><span class="stat-value" id="statStreak">0</span></div>
+    <div class="stat"><span class="stat-label">Longest streak</span><span class="stat-value" id="statLongest">0</span></div>
+    <div class="stat"><span class="stat-label">This month</span><span class="stat-value" id="statMonth">0</span></div>
+  </section>
+
+  <section class="charts-section" id="chartsSection">
+    <div class="chart-card">
+      <h3 class="chart-title">Activity Distribution</h3>
+      <div class="chart-wrap"><canvas id="pieChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3 class="chart-title">Minutes per Month</h3>
+      <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+    </div>
+  </section>
+
+  <main id="months" class="months"><!-- months injected by JS --></main>
+
+  <!-- Day editor modal -->
+  <div id="modal" class="modal hidden" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <header class="modal-head">
+        <h2 id="modalTitle">Log activity</h2>
+        <button class="icon-btn" id="modalClose" aria-label="Close">✕</button>
+      </header>
+
+      <div class="modal-body">
+        <p class="modal-date" id="modalDate"></p>
+
+        <label class="field">
+          <span>Activities</span>
+          <div id="activityChips" class="chips"></div>
+        </label>
+
+        <div class="row">
+          <label class="field">
+            <span>Duration (minutes)</span>
+            <input type="number" id="duration" min="0" step="5" placeholder="e.g. 45" />
+          </label>
+          <label class="field">
+            <span>Intensity</span>
+            <select id="intensity">
+              <option value="">—</option>
+              <option value="light">Light</option>
+              <option value="moderate">Moderate</option>
+              <option value="hard">Hard</option>
+              <option value="max">Max effort</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="field">
+          <span>Notes</span>
+          <textarea id="notes" rows="3" placeholder="How did it feel? PRs, distance, weight…"></textarea>
+        </label>
+      </div>
+
+      <footer class="modal-foot">
+        <button id="clearDay" class="btn ghost">Clear day</button>
+        <div class="spacer"></div>
+        <button id="cancelBtn" class="btn">Cancel</button>
+        <button id="saveBtn" class="btn primary">Save</button>
+      </footer>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
