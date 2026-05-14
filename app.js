@@ -3,19 +3,20 @@
   "use strict";
 
   const STORAGE_KEY = "fitness-tracker-v2";
+  const UI_KEY      = "fitness-tracker-ui-v2";
   const MIN_YEAR = 2026;
   const MAX_YEAR = 2032;
 
   const ACTIVITIES = [
-    { id: "run",      label: "Running",   icon: "🏃", color: "var(--c-run)",      hex: "#f0f0f0" },
-    { id: "cycle",    label: "Cycling",   icon: "🚴", color: "var(--c-cycle)",    hex: "#c8c8c8" },
-    { id: "swim",     label: "Swimming",  icon: "🏊", color: "var(--c-swim)",     hex: "#a8a8a8" },
-    { id: "strength", label: "Strength",  icon: "🏋️", color: "var(--c-strength)", hex: "#b8b8b8" },
-    { id: "hiit",     label: "HIIT",      icon: "⚡",  color: "var(--c-hiit)",    hex: "#787878" },
-    { id: "yoga",     label: "Yoga",      icon: "🧘", color: "var(--c-yoga)",     hex: "#d0d0d0" },
-    { id: "walk",     label: "Walk/Hike", icon: "🥾", color: "var(--c-walk)",     hex: "#909090" },
-    { id: "cardio",   label: "Cardio",    icon: "❤️", color: "var(--c-cardio)",   hex: "#e0e0e0" },
-    { id: "rest",     label: "Rest day",  icon: "😴", color: "var(--c-rest)",     hex: "#505050" },
+    { id: "run",      label: "Running",   icon: "↑",  color: "var(--c-run)",      hex: "#f0f0f0" },
+    { id: "cycle",    label: "Cycling",   icon: "↻",  color: "var(--c-cycle)",    hex: "#c8c8c8" },
+    { id: "swim",     label: "Swimming",  icon: "≋",  color: "var(--c-swim)",     hex: "#a8a8a8" },
+    { id: "strength", label: "Strength",  icon: "⊞",  color: "var(--c-strength)", hex: "#b8b8b8" },
+    { id: "hiit",     label: "HIIT",      icon: "◈",  color: "var(--c-hiit)",    hex: "#787878" },
+    { id: "yoga",     label: "Yoga",      icon: "◎",  color: "var(--c-yoga)",     hex: "#d0d0d0" },
+    { id: "walk",     label: "Walk/Hike", icon: "⇢",  color: "var(--c-walk)",     hex: "#909090" },
+    { id: "cardio",   label: "Cardio",    icon: "♡",  color: "var(--c-cardio)",   hex: "#e0e0e0" },
+    { id: "rest",     label: "Rest day",  icon: "–",  color: "var(--c-rest)",     hex: "#505050" },
   ];
   const ACT_BY_ID = Object.fromEntries(ACTIVITIES.map(a => [a.id, a]));
 
@@ -32,6 +33,7 @@
   if (currentYear > MAX_YEAR) currentYear = MAX_YEAR;
 
   let state = loadState();
+  let uiState = loadUiState(); // { collapsed: ["2026-0", "2026-3", ...] }
   let pieChart = null;
   let barChart = null;
 
@@ -39,7 +41,6 @@
   function loadState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      // Also migrate old key if present
       if (!raw) {
         const old = localStorage.getItem("fitness-tracker-2026-v1");
         if (old) return JSON.parse(old);
@@ -49,6 +50,26 @@
   }
   function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+  function loadUiState() {
+    try {
+      const raw = localStorage.getItem(UI_KEY);
+      return raw ? JSON.parse(raw) : { collapsed: [] };
+    } catch { return { collapsed: [] }; }
+  }
+  function saveUiState() {
+    localStorage.setItem(UI_KEY, JSON.stringify(uiState));
+  }
+  function monthUiKey(year, month) { return `${year}-${month}`; }
+  function isCollapsed(year, month) {
+    return uiState.collapsed.includes(monthUiKey(year, month));
+  }
+  function toggleCollapsed(year, month) {
+    const key = monthUiKey(year, month);
+    const idx = uiState.collapsed.indexOf(key);
+    if (idx === -1) uiState.collapsed.push(key);
+    else uiState.collapsed.splice(idx, 1);
+    saveUiState();
   }
 
   // ---- Date helpers ----
@@ -119,8 +140,12 @@
     const total = daysInMonth(year, month);
     const logged = countMonthLogged(year, month);
 
+    const collapsed = isCollapsed(year, month);
+    if (collapsed) wrap.classList.add("collapsed");
+
     wrap.innerHTML = `
       <header class="month-head">
+        <button class="collapse-btn" title="Toggle month" aria-label="Toggle month">${collapsed ? "›" : "‹"}</button>
         <h2>${MONTH_NAMES[month]} <span style="color:var(--muted);font-weight:500">${year}</span></h2>
         <div class="month-head-right">
           <span class="meta">${logged} / ${total} active</span>
@@ -134,6 +159,13 @@
     wrap.querySelector(".print-btn").addEventListener("click", e => {
       e.stopPropagation();
       printMonth(year, month, wrap);
+    });
+
+    wrap.querySelector(".collapse-btn").addEventListener("click", () => {
+      toggleCollapsed(year, month);
+      const nowCollapsed = isCollapsed(year, month);
+      wrap.classList.toggle("collapsed", nowCollapsed);
+      wrap.querySelector(".collapse-btn").textContent = nowCollapsed ? "›" : "‹";
     });
 
     const grid = wrap.querySelector(".grid");
@@ -402,6 +434,7 @@ ${activitySummary ? `<div class="activity-row">${activitySummary}</div>` : ""}
               font: { family: "'Rajdhani', sans-serif", size: 13, weight: "600" },
               padding: 14,
               usePointStyle: true,
+              pointStyle: "rect",
               pointStyleWidth: 10,
             },
           },
@@ -468,6 +501,7 @@ ${activitySummary ? `<div class="activity-row">${activitySummary}</div>` : ""}
               color: "#7a7a7a",
               font: { family: "'Rajdhani', sans-serif", size: 13, weight: "600" },
               usePointStyle: true,
+              pointStyle: "rect",
               pointStyleWidth: 10,
             },
           },
