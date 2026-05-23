@@ -8,15 +8,16 @@
   const MAX_YEAR = 2032;
 
   const ACTIVITIES = [
-    { id: "run",      label: "Running",   icon: "↑",  color: "var(--c-run)",      hex: "#f0f0f0" },
-    { id: "cycle",    label: "Cycling",   icon: "↻",  color: "var(--c-cycle)",    hex: "#c8c8c8" },
-    { id: "swim",     label: "Swimming",  icon: "≋",  color: "var(--c-swim)",     hex: "#a8a8a8" },
-    { id: "strength", label: "Strength",  icon: "⊞",  color: "var(--c-strength)", hex: "#b8b8b8" },
-    { id: "hiit",     label: "HIIT",      icon: "◈",  color: "var(--c-hiit)",    hex: "#787878" },
-    { id: "yoga",     label: "Yoga",      icon: "◎",  color: "var(--c-yoga)",     hex: "#d0d0d0" },
-    { id: "walk",     label: "Walk/Hike", icon: "⇢",  color: "var(--c-walk)",     hex: "#909090" },
-    { id: "cardio",   label: "Cardio",    icon: "♡",  color: "var(--c-cardio)",   hex: "#e0e0e0" },
-    { id: "rest",     label: "Rest day",  icon: "–",  color: "var(--c-rest)",     hex: "#505050" },
+    { id: "run",      label: "Running",   icon: "↑",  color: "var(--c-run)",      hex: "#60a5fa" },
+    { id: "cycle",    label: "Cycling",   icon: "↻",  color: "var(--c-cycle)",    hex: "#34d399" },
+    { id: "swim",     label: "Swimming",  icon: "≋",  color: "var(--c-swim)",     hex: "#38bdf8" },
+    { id: "strength", label: "Strength",  icon: "⊞",  color: "var(--c-strength)", hex: "#a78bfa" },
+    { id: "hiit",     label: "HIIT",      icon: "◈",  color: "var(--c-hiit)",     hex: "#f87171" },
+    { id: "yoga",     label: "Yoga",      icon: "◎",  color: "var(--c-yoga)",     hex: "#fbbf24" },
+    { id: "walk",     label: "Walk/Hike", icon: "⇢",  color: "var(--c-walk)",     hex: "#4ade80" },
+    { id: "cardio",   label: "Cardio",    icon: "♡",  color: "var(--c-cardio)",   hex: "#fb923c" },
+    { id: "gym",      label: "Gym",       icon: "⚡", color: "var(--c-gym)",      hex: "#e879f9" },
+    { id: "rest",     label: "Rest day",  icon: "–",  color: "var(--c-rest)",     hex: "#6b7280" },
   ];
   const ACT_BY_ID = Object.fromEntries(ACTIVITIES.map(a => [a.id, a]));
 
@@ -113,6 +114,29 @@
   nextYearBtn.addEventListener("click", () => {
     if (currentYear < MAX_YEAR) { currentYear++; updateYearUI(); refresh(); }
   });
+
+  // ---- Chart collapse ----
+  const UI_CHARTS_KEY = "fitness-tracker-charts-ui";
+  function loadChartUiState() {
+    try { return JSON.parse(localStorage.getItem(UI_CHARTS_KEY) || "{}"); } catch { return {}; }
+  }
+  const chartUiState = loadChartUiState();
+
+  function setupChartCollapse(cardId, bodyId, btnId) {
+    const card = document.getElementById(cardId);
+    const btn  = document.getElementById(btnId);
+    if (!card || !btn) return;
+    const isCollapsed = !!chartUiState[cardId];
+    if (isCollapsed) { card.classList.add("collapsed"); btn.textContent = "›"; }
+    btn.addEventListener("click", () => {
+      const nowCollapsed = card.classList.toggle("collapsed");
+      btn.textContent = nowCollapsed ? "›" : "‹";
+      chartUiState[cardId] = nowCollapsed ? 1 : 0;
+      localStorage.setItem(UI_CHARTS_KEY, JSON.stringify(chartUiState));
+    });
+  }
+  setupChartCollapse("chartCard1", "chartBody1", "chartCollapse1");
+  setupChartCollapse("chartCard2", "chartBody2", "chartCollapse2");
 
   // ---- Legend ----
   const legendEl = document.getElementById("legend");
@@ -282,8 +306,8 @@
   :root{
     --bg:#fff;--bg2:#f5f5f5;--panel:#efefef;--border:#d0d0d0;
     --text:#111;--muted:#555;--accent:#111;--today-ring:#000;
-    --c-run:#aaa;--c-cycle:#999;--c-swim:#888;--c-strength:#bbb;
-    --c-hiit:#666;--c-yoga:#ccc;--c-walk:#777;--c-cardio:#ddd;--c-rest:#eee;
+    --c-run:#60a5fa;--c-cycle:#34d399;--c-swim:#38bdf8;--c-strength:#a78bfa;
+    --c-hiit:#f87171;--c-yoga:#fbbf24;--c-walk:#4ade80;--c-cardio:#fb923c;--c-gym:#e879f9;--c-rest:#6b7280;
   }
   body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;padding:28px 32px;}
   .page-header{display:flex;align-items:flex-end;justify-content:space-between;border-bottom:2px solid var(--text);padding-bottom:10px;margin-bottom:18px;}

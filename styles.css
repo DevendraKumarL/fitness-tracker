@@ -17,15 +17,16 @@
   --font-ui: "Rajdhani", "Segoe UI", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --c-cardio: #e0e0e0;
-  --c-strength: #b8b8b8;
-  --c-yoga: #d0d0d0;
-  --c-run: #f0f0f0;
-  --c-cycle: #c8c8c8;
-  --c-swim: #a8a8a8;
-  --c-walk: #909090;
-  --c-hiit: #787878;
-  --c-rest: #505050;
+  --c-run:      #60a5fa;
+  --c-cycle:    #34d399;
+  --c-swim:     #38bdf8;
+  --c-strength: #a78bfa;
+  --c-hiit:     #f87171;
+  --c-yoga:     #fbbf24;
+  --c-walk:     #4ade80;
+  --c-cardio:   #fb923c;
+  --c-rest:     #6b7280;
+  --c-gym:      #e879f9;
 }
 
 * { box-sizing: border-box; }
@@ -107,7 +108,6 @@ html, body {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  flex: 1;
   justify-content: center;
 }
 
@@ -561,6 +561,13 @@ html, body {
 .year-nav:hover:not(:disabled) { color: var(--text); }
 .year-nav:disabled { opacity: 0.25; cursor: default; }
 
+/* ---- Legend Section ---- */
+.legend-section {
+  padding: 0.75rem 1.75rem 0;
+  display: flex;
+  justify-content: center;
+}
+
 /* ---- Charts Section ---- */
 .charts-section {
   display: grid;
@@ -580,6 +587,13 @@ html, body {
   gap: 0.5rem;
 }
 
+.chart-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
 .chart-title {
   margin: 0;
   font-family: var(--font-display);
@@ -590,19 +604,40 @@ html, body {
   color: var(--muted);
 }
 
+.chart-body {
+  overflow: hidden;
+  transition: max-height 0.25s ease, opacity 0.2s ease;
+  max-height: 400px;
+  opacity: 1;
+}
+.chart-card.collapsed .chart-body {
+  max-height: 0;
+  opacity: 0;
+}
+
 .chart-wrap {
   position: relative;
   width: 100%;
-  max-height: 200px;
+  height: 200px;
 }
 
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
   .charts-section { grid-template-columns: 1fr; }
+  .chart-wrap { height: 220px; }
 }
 
 @media (max-width: 720px) {
   .stats { grid-template-columns: repeat(2, 1fr); }
   .topbar { gap: 0.75rem; }
-  .legend { order: 3; width: 100%; justify-content: flex-start; }
+  .charts-section { padding: 0.75rem 1rem 0; }
+  .legend-section { padding: 0.75rem 1rem 0; }
+  .chart-wrap { height: 240px; }
+  .chart-card { overflow: visible; }
+}
+
+@media (max-width: 480px) {
+  .charts-section { padding: 0.5rem 0.75rem 0; }
+  .legend-section { padding: 0.5rem 0.75rem 0; }
+  .chart-wrap { height: 200px; }
 }

@@ -28,10 +28,6 @@
       </div>
     </div>
 
-    <div class="legend" id="legend">
-      <!-- activity legend injected by JS -->
-    </div>
-
     <div class="year-selector">
       <button id="prevYear" class="icon-btn year-nav" aria-label="Previous year">&#8249;</button>
       <span id="yearDisplay" class="year-label">2026</span>
@@ -57,15 +53,29 @@
   </section>
 
   <section class="charts-section" id="chartsSection">
-    <div class="chart-card">
-      <h3 class="chart-title">Activity Distribution</h3>
-      <div class="chart-wrap"><canvas id="pieChart"></canvas></div>
+    <div class="chart-card" id="chartCard1">
+      <div class="chart-head">
+        <h3 class="chart-title">Activity Distribution</h3>
+        <button class="collapse-btn" id="chartCollapse1" title="Toggle chart" aria-label="Toggle chart">&#8249;</button>
+      </div>
+      <div class="chart-body" id="chartBody1">
+        <div class="chart-wrap"><canvas id="pieChart"></canvas></div>
+      </div>
     </div>
-    <div class="chart-card">
-      <h3 class="chart-title">Minutes per Month</h3>
-      <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+    <div class="chart-card" id="chartCard2">
+      <div class="chart-head">
+        <h3 class="chart-title">Minutes per Month</h3>
+        <button class="collapse-btn" id="chartCollapse2" title="Toggle chart" aria-label="Toggle chart">&#8249;</button>
+      </div>
+      <div class="chart-body" id="chartBody2">
+        <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+      </div>
     </div>
   </section>
+
+  <div class="legend-section">
+    <div class="legend" id="legend"><!-- activity legend injected by JS --></div>
+  </div>
 
   <main id="months" class="months"><!-- months injected by JS --></main>
 
